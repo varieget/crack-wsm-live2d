@@ -1,0 +1,16 @@
+{
+  "name": "crack-wsm-live2d",
+  "version": "1.0.0",
+  "description": "Crack bilibili workshop WSM files",
+  "main": "index.js",
+  "repository": "https://github.com/varieget/crack-wsm-live2d",
+  "author": "varieget",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "fs-extra": "^10.0.1"
+  },
+  "engines": {
+    "node": ">=16.14.0"
+  }
+}
