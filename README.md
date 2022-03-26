@@ -18,22 +18,22 @@
 
 1. 安装 node
 
-前往[nodejs.org](https://nodejs.org/zh-cn/)下载并安装 node。
+前往 [nodejs.org](https://nodejs.org/zh-cn/) 下载并安装 node。
 
-2. 安装依赖
-
-```bash
-npm i
-```
-
-3. 将 `wsm` 存储在此项目的根目录下
-
-4. 运行命令
+2. 在终端运行
 
 ```bash
-node .
+$ npx crack-wsm-live2d <archive> [output]
 ```
 
-5. 生成 `dist` 文件夹
+### 例如
 
-解压后的 `live2d` 文件将被输出到 `dist` 文件夹。
+```bash
+$ npx crack-wsm-live2d ./test.wsm ./dist
+```
+
+### 帮助
+
+```bash
+$ npx crack-wsm-live2d -h
+```
