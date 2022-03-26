@@ -2,12 +2,25 @@
   "name": "crack-wsm-live2d",
   "version": "1.0.0",
   "description": "Crack bilibili workshop WSM files",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "bin": {
+    "wsm": "./bin/wsm.js"
+  },
+  "files": [
+    "bin",
+    "lib"
+  ],
   "repository": "https://github.com/varieget/crack-wsm-live2d",
+  "keywords": [
+    "bilibili",
+    "workshop",
+    "wsm",
+    "live2d"
+  ],
   "author": "varieget",
   "license": "MIT",
-  "private": true,
   "dependencies": {
+    "commander": "^9.1.0",
     "fs-extra": "^10.0.1"
   },
   "engines": {
