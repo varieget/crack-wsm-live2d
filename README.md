@@ -23,10 +23,12 @@
 2. 在终端运行
 
 ```bash
-$ npx crack-wsm-live2d <archive> [output]
+$ npx crack-wsm-live2d <archive> [output] [encoding]
 ```
 
 ### 例如
+
+将当前目录下一个名为 `test.wsm` 的文件解压到 `dist` 文件夹。
 
 ```bash
 $ npx crack-wsm-live2d ./test.wsm ./dist

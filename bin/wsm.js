@@ -15,12 +15,12 @@ program
 const { loadLive2dWsmAsync } = require("../lib/3daf");
 
 program
-  .command("list <archive>")
+  .command("list <archive> [encoding]")
   .alias("ls")
   .description("list files of wsm archive")
-  .action(async (archive) => {
+  .action(async (archive, encoding) => {
     const file = fs.readFileSync(archive);
-    const WsmInstance = await loadLive2dWsmAsync(file.buffer);
+    const WsmInstance = await loadLive2dWsmAsync(file.buffer, encoding);
 
     for (const [name] of WsmInstance.files) {
       console.log(name);
@@ -30,14 +30,18 @@ program
 program
   .argument("<archive>", "path to a wsm file")
   .argument("[output]", "path to a output directory")
+  .argument(
+    "[encoding]",
+    "identifies the encoding. Default: 'utf-8'. See: https://nodejs.org/api/util.html#class-utiltextdecoder"
+  )
   .description("extract archive")
-  .action(async (archive, dest) => {
+  .action(async (archive, dest, encoding) => {
     if (path.extname(archive) !== ".wsm") {
       throw new Error("It is not a wsm file.");
     }
 
     const file = fs.readFileSync(archive);
-    const WsmInstance = await loadLive2dWsmAsync(file.buffer);
+    const WsmInstance = await loadLive2dWsmAsync(file.buffer, encoding);
 
     dest = path.resolve(dest || process.cwd(), path.basename(archive, ".wsm"));
 
