@@ -1,6 +1,6 @@
 {
   "name": "crack-wsm-live2d",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Crack bilibili workshop WSM files",
   "main": "lib/index.js",
   "bin": "./bin/wsm.js",
