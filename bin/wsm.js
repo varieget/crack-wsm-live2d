@@ -9,6 +9,8 @@ const { Command } = require("commander");
 const program = new Command();
 
 program
+  .name(packageJSON.name)
+  .usage("<command> [arguments]")
   .version("v" + packageJSON.version)
   .description("Extract wsm archive files");
 
@@ -25,6 +27,38 @@ program
     for (const [name] of WsmInstance.files) {
       console.log(name);
     }
+  });
+
+program
+  .command("all")
+  .description("extract all wsm archives in the current working directory")
+  .action(() => {
+    const cwd = process.cwd();
+
+    fs.readdir(cwd, (err, files) => {
+      if (err) throw err;
+
+      files
+        .filter((file) => /.wsm$/.test(file))
+        .forEach(async (filename) => {
+          const dirname = path.basename(filename, ".wsm");
+
+          const file = fs.readFileSync(path.resolve(cwd, filename));
+          const WsmInstance = await loadLive2dWsmAsync(file.buffer);
+
+          console.log(path.resolve(cwd, dirname));
+
+          for (const [_, { name, data }] of WsmInstance.files) {
+            fs.outputFile(
+              path.resolve(cwd, dirname, name),
+              new Uint8Array(data),
+              (err) => {
+                if (err) throw err;
+              }
+            );
+          }
+        });
+    });
   });
 
 program
