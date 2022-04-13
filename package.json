@@ -17,9 +17,16 @@
   ],
   "author": "varieget",
   "license": "MIT",
+  "scripts": {
+    "prettier": "prettier --write .",
+    "prettier:check": "prettier --check ."
+  },
   "dependencies": {
     "commander": "^9.1.0",
     "fs-extra": "^10.0.1"
+  },
+  "devDependencies": {
+    "prettier": "^2.6.2"
   },
   "engines": {
     "node": ">=16.14.0"
