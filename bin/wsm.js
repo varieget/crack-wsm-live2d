@@ -5,10 +5,9 @@ const path = require("path");
 
 const packageJSON = require("../package.json");
 const { Command } = require("commander");
-const { downloadFromWorkshop } = require("../lib/workshop")
+const { downloadFromWorkshop } = require("../lib/workshop");
 
 const program = new Command();
-
 
 async function extractFile(archive, dest, encoding) {
   if (path.extname(archive) !== ".wsm") {
@@ -27,7 +26,7 @@ async function extractFile(archive, dest, encoding) {
       console.log(path.resolve(dest, name));
     });
   }
-};
+}
 
 program
   .name(packageJSON.name)
@@ -104,18 +103,21 @@ program
     "identifies the encoding. Default: 'utf-8'. See: https://nodejs.org/api/util.html#class-utiltextdecoder"
   )
   .option("-e,--extract", "extract the .wsm file after download it")
-  .option("-d,--delete","delete the .wsm file after extract\nNote: this switch only avaliable when --extract specified")
+  .option(
+    "-d,--delete",
+    "delete the .wsm file after extract\nNote: this switch only avaliable when --extract specified"
+  )
   .action(async (url, dest, encoding, options) => {
-    const baseDir = (dest || process.cwd())
-    console.log("Downloading file...")
-    const file =await downloadFromWorkshop(url, baseDir);
+    const baseDir = dest || process.cwd();
+    console.log("Downloading file...");
+    const file = await downloadFromWorkshop(url, baseDir);
     console.log(`download ${file} succeed`);
     if (options["extract"]) {
-      extractFile(file, baseDir, encoding)
-      if(options["delete"]){
+      extractFile(file, baseDir, encoding);
+      if (options["delete"]) {
         await fs.unlink(file);
       }
     }
-  })
+  });
 
 program.parse(process.argv);

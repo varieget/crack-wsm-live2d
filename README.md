@@ -42,25 +42,25 @@ $ npx crack-wsm-live2d all
 
 ### 直接从创意工坊下载文件并解包
 
-1. 复制创意工坊的连接，链接**必须形如**`https://workshop.bilibili.com/live2d/xxxx`
+1. 复制创意工坊的连接，链接**必须形如** `https://workshop.bilibili.com/live2d/xxxx`
 
 2. 使用
 
-    > 更详细的内容可运行`npx crack-wsm-live2d d -h`查看
+   > 更详细的内容可运行 `npx crack-wsm-live2d d -h` 查看
 
-    1. 下载**但不解包**文件
+   1. 下载**但不解包**文件
 
-        ```bash
-        $ npx crack-wsm-live2d d <url> [output] [encoding]
-        ```
+      ```bash
+      $ npx crack-wsm-live2d d <url>
+      ```
 
-    2. 下载并解包文件
+   2. 下载并解包文件
 
-        ```bash
-        $ npx crack-wsm-live2d d -e <url> [output] [encoding]
-        ```
+      ```bash
+      $ npx crack-wsm-live2d d -e <url> [output] [encoding]
+      ```
 
-        > 添加`-d`参数可以在解包完成后删除源文件
+      > 添加 `-d` 参数可以在解包完成后删除源文件
 
 ### 帮助
 
