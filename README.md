@@ -51,7 +51,7 @@ $ npx crack-wsm-live2d all
    1. 下载**但不解包**文件
 
       ```bash
-      $ npx crack-wsm-live2d d <url>
+      $ npx crack-wsm-live2d d <url> [output]
       ```
 
    2. 下载并解包文件
