@@ -1,11 +1,16 @@
 #!/usr/bin/env node
 
-const fs = require("fs-extra");
-const path = require("path");
+import fs from "node:fs/promises";
+import path from "node:path";
+import { Command } from "commander";
 
-const packageJSON = require("../package.json");
-const { Command } = require("commander");
-const { downloadFromWorkshop } = require("../lib/workshop");
+import { loadLive2dWsmAsync } from "../lib/3daf.js";
+
+import { downloadFromWorkshop } from "../lib/workshop.js";
+
+const packageJSON = JSON.parse(
+  await fs.readFile(new URL("../package.json", import.meta.url))
+);
 
 const program = new Command();
 
@@ -14,17 +19,24 @@ async function extractFile(archive, dest, encoding) {
     throw new Error("It is not a wsm file.");
   }
 
-  const file = fs.readFileSync(archive);
+  const file = await fs.readFile(archive);
+
   const WsmInstance = await loadLive2dWsmAsync(file.buffer, encoding);
 
   dest = path.resolve(dest || process.cwd(), path.basename(archive, ".wsm"));
 
   for (const [_, { name, data }] of WsmInstance.files) {
-    fs.outputFile(path.resolve(dest, name), new Uint8Array(data), (err) => {
-      if (err) throw err;
+    try {
+      await fs.mkdir(path.resolve(dest, path.dirname(name)), {
+        recursive: true,
+      });
 
+      await fs.writeFile(path.resolve(dest, name), new Uint8Array(data));
+    } catch (err) {
+      throw new Error(err);
+    } finally {
       console.log(path.resolve(dest, name));
-    });
+    }
   }
 }
 
@@ -34,14 +46,12 @@ program
   .version("v" + packageJSON.version)
   .description("Extract wsm archive files");
 
-const { loadLive2dWsmAsync } = require("../lib/3daf");
-
 program
   .command("list <archive> [encoding]")
   .alias("ls")
   .description("list files of wsm archive")
   .action(async (archive, encoding) => {
-    const file = fs.readFileSync(archive);
+    const file = await fs.readFile(archive);
     const WsmInstance = await loadLive2dWsmAsync(file.buffer, encoding);
 
     for (const [name] of WsmInstance.files) {
@@ -52,34 +62,37 @@ program
 program
   .command("all")
   .description("extract all wsm archives in the current working directory")
-  .action(() => {
+  .action(async () => {
     const cwd = process.cwd();
 
-    fs.readdir(cwd, (err, files) => {
-      if (err) throw err;
+    const files = await fs.readdir(cwd);
 
-      files
-        .filter((file) => /.wsm$/.test(file))
-        .forEach(async (filename) => {
-          const dirname = path.basename(filename, ".wsm");
+    files
+      .filter((file) => /.wsm$/.test(file))
+      .forEach(async (filename) => {
+        const dirname = path.basename(filename, ".wsm");
 
-          const file = fs.readFileSync(path.resolve(cwd, filename));
+        const file = await fs.readFile(path.resolve(cwd, filename));
 
-          const WsmInstance = await loadLive2dWsmAsync(file.buffer);
+        const WsmInstance = await loadLive2dWsmAsync(file.buffer);
 
-          console.log(path.resolve(cwd, dirname));
+        for (const [_, { name, data }] of WsmInstance.files) {
+          try {
+            await fs.mkdir(path.resolve(cwd, dirname, path.dirname(name)), {
+              recursive: true,
+            });
 
-          for (const [_, { name, data }] of WsmInstance.files) {
-            fs.outputFile(
+            await fs.writeFile(
               path.resolve(cwd, dirname, name),
-              new Uint8Array(data),
-              (err) => {
-                if (err) throw err;
-              }
+              new Uint8Array(data)
             );
+          } catch (err) {
+            throw new Error(err);
+          } finally {
+            console.log(path.resolve(cwd, dirname));
           }
-        });
-    });
+        }
+      });
   });
 
 program
@@ -102,9 +115,9 @@ program
     "[encoding]",
     "identifies the encoding. Default: 'utf-8'. See: https://nodejs.org/api/util.html#class-utiltextdecoder"
   )
-  .option("-e,--extract", "extract the .wsm file after download it")
+  .option("-e, --extract", "extract the .wsm file after download it")
   .option(
-    "-d,--delete",
+    "-d, --delete",
     "delete the .wsm file after extract\nNote: this switch only avaliable when --extract specified"
   )
   .action(async (url, dest, encoding, options) => {
