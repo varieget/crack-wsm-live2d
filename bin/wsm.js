@@ -15,7 +15,7 @@ const packageJSON = JSON.parse(
 const program = new Command();
 
 async function extractFile(archive, dest, encoding, options) {
-  const files = options.all ? await fs.readdir(archive) : [archive];
+  const files = options?.all ? await fs.readdir(archive) : [archive];
 
   files
     .filter((file) => /.wsm$/.test(file))
@@ -28,7 +28,7 @@ async function extractFile(archive, dest, encoding, options) {
         path.basename(filename, '.wsm')
       );
 
-      if (options.all) console.log(baseDir);
+      if (options?.all) console.log(baseDir);
 
       for (const [_, { name, data }] of WsmInstance.files) {
         try {
@@ -40,7 +40,7 @@ async function extractFile(archive, dest, encoding, options) {
         } catch (err) {
           throw new Error(err);
         } finally {
-          if (!options.all) console.log(path.resolve(baseDir, name));
+          if (!options?.all) console.log(path.resolve(baseDir, name));
         }
       }
     });
