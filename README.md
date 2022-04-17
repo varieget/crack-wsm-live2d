@@ -31,13 +31,13 @@ $ npx crack-wsm-live2d <archive> [output] [encoding]
 将当前目录下一个名为 `test.wsm` 的文件解压到 `dist` 文件夹
 
 ```bash
-$ npx crack-wsm-live2d ./test.wsm ./dist
+$ npx crack-wsm-live2d e ./test.wsm ./dist
 ```
 
-或者，解压当前目录下全部 `wsm` 文件
+或者，使用 `--all` 解压当前目录下全部 `wsm` 文件
 
 ```bash
-$ npx crack-wsm-live2d all
+$ npx crack-wsm-live2d e ./ --all
 ```
 
 ### 直接从创意工坊下载文件并解包

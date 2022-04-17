@@ -14,35 +14,40 @@ const packageJSON = JSON.parse(
 
 const program = new Command();
 
-async function extractFile(archive, dest, encoding) {
-  if (path.extname(archive) !== '.wsm') {
-    throw new Error('It is not a wsm file.');
-  }
+async function extractFile(archive, dest, encoding, options) {
+  const files = options.all ? await fs.readdir(archive) : [archive];
 
-  const file = await fs.readFile(archive);
+  files
+    .filter((file) => /.wsm$/.test(file))
+    .forEach(async (filename) => {
+      const file = await fs.readFile(filename);
+      const WsmInstance = await loadLive2dWsmAsync(file.buffer, encoding);
 
-  const WsmInstance = await loadLive2dWsmAsync(file.buffer, encoding);
+      const baseDir = path.resolve(
+        dest || process.cwd(),
+        path.basename(filename, '.wsm')
+      );
 
-  dest = path.resolve(dest || process.cwd(), path.basename(archive, '.wsm'));
+      if (options.all) console.log(baseDir);
 
-  for (const [_, { name, data }] of WsmInstance.files) {
-    try {
-      await fs.mkdir(path.resolve(dest, path.dirname(name)), {
-        recursive: true,
-      });
+      for (const [_, { name, data }] of WsmInstance.files) {
+        try {
+          await fs.mkdir(path.resolve(baseDir, path.dirname(name)), {
+            recursive: true,
+          });
 
-      await fs.writeFile(path.resolve(dest, name), new Uint8Array(data));
-    } catch (err) {
-      throw new Error(err);
-    } finally {
-      console.log(path.resolve(dest, name));
-    }
-  }
+          await fs.writeFile(path.resolve(baseDir, name), new Uint8Array(data));
+        } catch (err) {
+          throw new Error(err);
+        } finally {
+          if (!options.all) console.log(path.resolve(baseDir, name));
+        }
+      }
+    });
 }
 
 program
   .name(packageJSON.name)
-  .usage('<command> [arguments]')
   .version('v' + packageJSON.version)
   .description('Extract wsm archive files');
 
@@ -60,48 +65,15 @@ program
   });
 
 program
-  .command('all')
-  .description('extract all wsm archives in the current working directory')
-  .action(async () => {
-    const cwd = process.cwd();
-
-    const files = await fs.readdir(cwd);
-
-    files
-      .filter((file) => /.wsm$/.test(file))
-      .forEach(async (filename) => {
-        const dirname = path.basename(filename, '.wsm');
-
-        const file = await fs.readFile(path.resolve(cwd, filename));
-
-        const WsmInstance = await loadLive2dWsmAsync(file.buffer);
-
-        for (const [_, { name, data }] of WsmInstance.files) {
-          try {
-            await fs.mkdir(path.resolve(cwd, dirname, path.dirname(name)), {
-              recursive: true,
-            });
-
-            await fs.writeFile(
-              path.resolve(cwd, dirname, name),
-              new Uint8Array(data)
-            );
-          } catch (err) {
-            throw new Error(err);
-          } finally {
-            console.log(path.resolve(cwd, dirname));
-          }
-        }
-      });
-  });
-
-program
-  .argument('<archive>', 'path to a wsm file')
+  .command('extract')
+  .alias('e')
+  .argument('<archive>', 'path to a wsm file or the directory')
   .argument('[output]', 'path to a output directory')
   .argument(
     '[encoding]',
     "identifies the encoding. Default: 'utf-8'. See: https://nodejs.org/api/util.html#class-utiltextdecoder"
   )
+  .option('--all', 'extract all wsm archives in the archive directory')
   .description('extract archive')
   .action(extractFile);
 
