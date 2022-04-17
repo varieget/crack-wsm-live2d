@@ -19,6 +19,7 @@
   "author": "varieget",
   "license": "MIT",
   "scripts": {
+    "eslint": "eslint --fix .",
     "prettier": "prettier --write .",
     "prettier:check": "prettier --check ."
   },
@@ -27,6 +28,10 @@
     "commander": "^9.1.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.17.9",
+    "@babel/eslint-parser": "^7.17.0",
+    "eslint": "^8.13.0",
+    "eslint-config-prettier": "^8.5.0",
     "prettier": "^2.6.2"
   },
   "engines": {
