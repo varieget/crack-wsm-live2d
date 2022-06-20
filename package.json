@@ -24,8 +24,11 @@
     "prettier:check": "prettier --check ."
   },
   "dependencies": {
+    "@petamoriken/float16": "^3.6.3",
     "axios": "^0.26.1",
-    "commander": "^9.1.0"
+    "commander": "^9.1.0",
+    "ws": "^8.8.0",
+    "zstd-codec": "^0.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.17.9",
